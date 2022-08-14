@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<codebook code="T" name="Česko v pohybu (2017-2019), datová matice s cestami" version="2.12 (CVUT)" created="2020-10-26" author="Centrum dopravního výzkumu, v. v. i." contact="petr.kouril@cdv.cz">
+  <variable code="T_ID" name="ID cesty" type="integer"/>
+  <variable code="P_ID" name="ID osoby" type="integer"/>
+  <variable code="H_ID" name="ID domácnosti" type="integer"/>
+  <variable code="T_ord" name="Pořadí cesty v rozhodný den" question="Pořadí cesty" type="integer"/>
+  <variable code="T_modes_foot" name="Pěšky, minuty" question="[ _ _ _ ] min, Pěšky" type="integer"/>
+  <variable code="T_modes_bike" name="Kolo, minuty" question="[ _ _ _ ] min, Kolo" type="integer"/>
+  <variable code="T_modes_urbu" name="Městský bus, minuty" question="[ _ _ _ ] min, Městský bus" type="integer"/>
+  <variable code="T_modes_rebu" name="Regionální bus, minuty" question="[ _ _ _ ] min, Regionální bus" type="integer"/>
+  <variable code="T_modes_cobu" name="Dálkový bus, minuty" question="[ _ _ _ ] min, Dálkový bus" type="integer"/>
+  <variable code="T_modes_trol" name="Trolejbus, minuty" question="[ _ _ _ ] min, Trolejbus" type="integer"/>
+  <variable code="T_modes_tram" name="Tramvaj, minuty" question="[ _ _ _ ] min, Tramvaj" type="integer"/>
+  <variable code="T_modes_train" name="Vlak, minuty" question="[ _ _ _ ] min, Vlak" type="integer"/>
+  <variable code="T_modes_cadr" name="Auto, řidič, minuty" question="[ _ _ _ ] min, Auto, řidič" type="integer"/>
+  <variable code="T_modes_capa" name="Auto, spolujezdec, minuty" question="[ _ _ _ ] min, Auto, spolujezdec" type="integer"/>
+  <variable code="T_modes_metro" name="Metro, minuty" question="[ _ _ _ ] min, Metro" type="integer"/>
+  <variable code="T_modes_plane" name="Letadlo, minuty" question="[ _ _ _ ] min, Letadlo" type="integer"/>
+  <variable code="T_modes_other" name="Jiný, minuty" question="[ _ _ _ ] min, Jiný (VYPIŠTE): " type="integer"/>
+  <variable code="T_next" name="Pokračující cesta" question="Podnikl(a) jste další cestu?" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="T_O_orp_name" name="Výchozí bod - název ORP" type="integer"/> 
+  <variable code="T_O_orp_code" name="Výchozí bod - kód ORP (RUIAN)" type="integer"/>  
+  <variable code="T_O_address_city" name="Výchozí bod - název obce" type="integer"/>
+  <variable code="T_O_address_city_code" name="Výchozí bod - kód obce (RUIAN)" type="integer"/>
+  <variable code="T_O_address_district" name="Výchozí bod - název MOaMČ (RUIAN)" type="integer"/>
+  <variable code="T_O_address_district_code" name="Výchozí bod - kód MOaMČ (RUIAN)" type="integer"/>
+  <variable code="T_O_time_hh" name="Výchozí bod - hodina" question="KDY JSTE VYRAZIL(A)?" type="integer"/>
+  <variable code="T_O_time_min" name="Výchozí bod - minuta" question="KDY JSTE VYRAZIL(A)?" type="integer"/>
+  <variable code="T_D_orp_name" name="Destinace - název ORP" type="integer"/> 
+  <variable code="T_D_orp_code" name="Destinace - kód ORP (RUIAN)" type="integer"/>  
+  <variable code="T_D_address_city" name="Destinace - název obce" type="integer"/>
+  <variable code="T_D_address_city_code" name="Destinace - kód obce (RUIAN)" type="integer"/>
+  <variable code="T_D_address_district" name="Destinace - název MOaMČ (RUIAN)" type="integer"/>
+  <variable code="T_D_address_district_code" name="Destinace - kód MOaMČ (RUIAN)" type="integer"/>
+  <variable code="T_D_time_hh" name="Destinace - čas, hodina" question="KDY JSTE DORAZIL(A)?" type="integer"/>
+  <variable code="T_D_time_min" name="Destinace - čas, minuta" question="KDY JSTE DORAZIL(A)?" type="integer"/>
+  <variable code="T_D_purpose" name="Účel cesty" question="Proč jste tuto cestu podnikl(a)? Prosím uveďte JEN JEDEN ÚČEL" type="factor">
+    <factor code="1" name="bydliště"/>
+    <factor code="2" name="volno"/>
+    <factor code="3" name="stravování"/>
+    <factor code="4" name="nakupování"/>
+    <factor code="5" name="práce"/>
+    <factor code="6" name="prac. cesta"/>
+    <factor code="7" name="vzdělávání"/>
+    <factor code="8" name="zařizování"/>
+    <factor code="9" name="ostatní"/>
+  </variable>
+  <variable code="T_O_purpose" name="Výchozí aktivita (účel)" question="" type="factor">
+    <factor code="1" name="bydliště"/>
+    <factor code="2" name="volno"/>
+    <factor code="3" name="stravování"/>
+    <factor code="4" name="nakupování"/>
+    <factor code="5" name="práce"/>
+    <factor code="6" name="prac. cesta"/>
+    <factor code="7" name="vzdělávání"/>
+    <factor code="8" name="zařizování"/>
+    <factor code="9" name="ostatní"/>
+  </variable>
+  <variable code="T_last_trip" name="Poslední cesta?" question="Podnikl(a) jste další cestu?" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="T_dist_de" name="Deklarovaná vzdálenost cesty [km]" question="" type="numeric"/>
+  <variable code="T_dist_me" name="Vypočtená vzdálenost cesty [km]" question="" type="numeric"/>
+  <variable code="T_dist_crow" name="Vzdálenost vzdušnou čarou [km]" question="" type="numeric"/>
+  <variable code="T_time_de" name="Deklarovaný čas cesty [hod]" question="" type="numeric"/>
+  <variable code="T_time_me" name="Vypočtený čas cesty [hod]" question="" type="numeric"/>
+  <variable code="T_mainmode" name="Hlavní mód" question="" type="factor">
+    <factor code="1" name="pěšky"/>
+    <factor code="2" name="kolo"/>
+    <factor code="3" name="MHD"/>
+    <factor code="4" name="bus"/>
+    <factor code="5" name="vlak"/>
+    <factor code="6" name="auto-d"/>
+    <factor code="7" name="auto-p"/>
+    <factor code="8" name="ostatní"/>
+</variable>
+  <variable code="T_dist_valid" name="Validita vypočtené vzdálenosti" question="" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="H_region" name="Kraj ČR" question="" type="factor">
+    <factor code="1" name="Hlavní město Praha"/>
+    <factor code="2" name="Středočeský kraj"/>
+    <factor code="3" name="Jihočeský kraj"/>
+    <factor code="4" name="Plzeňský kraj"/>
+    <factor code="5" name="Karlovarský kraj"/>
+    <factor code="6" name="Ústecký kraj"/>
+    <factor code="7" name="Liberecký kraj"/>
+    <factor code="8" name="Královéhradecký kraj"/>
+    <factor code="9" name="Pardubický kraj"/>
+    <factor code="10" name="Kraj Vysočina"/>
+    <factor code="11" name="Jihomoravský kraj"/>
+    <factor code="12" name="Olomoucký kraj"/>
+    <factor code="13" name="Zlínský kraj"/>
+    <factor code="14" name="Moravskoslezský kraj"/>
+  </variable>
+  <variable code="H_munpop" name="Velikost sídla" question="" type="factor">
+    <factor code="1" name="do 999"/>
+    <factor code="2" name="1 000-1 999"/>
+    <factor code="3" name="2 000-4 999"/>
+    <factor code="4" name="5 000-9 999"/>
+    <factor code="5" name="10 000-19 999"/>
+    <factor code="6" name="20 000-49 999"/>
+    <factor code="7" name="50 000-99 999"/>
+    <factor code="8" name="100 000+"/>
+  </variable>
+  <variable code="P_gender" name="Pohlaví" question="Pohlaví" type="factor">
+    <factor code="1" name="Muž"/>
+    <factor code="2" name="Žena"/>
+  </variable>
+  <variable code="P_age" name="Věk" question="" type="factor">
+    <factor code="1" name="0-14"/>
+    <factor code="2" name="15-18"/>
+    <factor code="3" name="19-29"/>
+    <factor code="4" name="30-39"/>
+    <factor code="5" name="40-49"/>
+    <factor code="6" name="50-59"/>
+    <factor code="7" name="60-69"/>
+    <factor code="8" name="70+"/>
+  </variable>
+  <variable code="P_education" name="Nejvyšší dosažené vzdělání" question="Ukončené vzdělání" type="factor">
+    <factor code="1" name="Neukončené ZŠ"/>
+    <factor code="2" name="ZŠ"/>
+    <factor code="3" name="SŠ: výuční list"/>
+    <factor code="4" name="SŠ: maturita"/>
+    <factor code="5" name="Vyšší odborné"/>
+    <factor code="6" name="VŠ"/>
+  </variable>
+  <variable code="P_ea" name="Ekonomická aktivita" question="" type="factor">
+    <factor code="1" name="neaktivní"/>
+    <factor code="2" name="aktivní"/>
+  </variable>
+  <variable code="P_caravail" name="Dispozice OA" question="" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_bikeavail" name="Dispozice kolem" question="" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_ptavail" name="Dispozice předplatným či slevou na VHD" question="" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+</codebook>

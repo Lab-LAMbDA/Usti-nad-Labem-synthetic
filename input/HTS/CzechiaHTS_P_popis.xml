@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<codebook code="P" name="Česko v pohybu (2017-2019), datová matice s osobami" version="2.12 (CVUT)" created="2020-10-26" author="Centrum dopravního výzkumu, v. v. i." contact="petr.kouril@cdv.cz">
+  <variable code="P_ID" name="ID osoby" type="integer"/>
+  <variable code="H_ID" name="ID domácnosti" type="integer"/>
+  <variable code="P_gender" name="Pohlaví" question="Pohlaví" type="factor">
+    <factor code="1" name="muž"/>
+    <factor code="2" name="žena"/>
+  </variable>
+  <variable code="P_education" name="Nejvyšší dosažené vzdělání" question="Vzdělání" type="factor">
+    <factor code="1" name="Neukončené ZŠ"/>
+    <factor code="2" name="ZŠ"/>
+    <factor code="3" name="SŠ: výuční list"/>
+    <factor code="4" name="SŠ: maturita"/>
+    <factor code="5" name="Vyšší odborné"/>
+    <factor code="6" name="VŠ"/>
+  </variable>
+  <variable code="P_work" name="Ekonomická aktivita" question="Ekonomická aktivita" type="factor">
+    <factor code="1" name="zaměstnanec, zaměstnavatel, samostatně činný či pomáhající"/>
+    <factor code="2" name="pracující SŠ student nebo učeň, pracující VŠ student"/>
+    <factor code="3" name="žák ZŠ, student SŠ, student VŠ"/>
+    <factor code="4" name="pracující důchodce"/>
+    <factor code="5" name="žena na mateřské dovolené"/>
+    <factor code="6" name="nezaměstnaný hledající první zaměstnání"/>
+    <factor code="7" name="ostatní nezaměstnaní"/>
+    <factor code="8" name="nepracující důchodce"/>
+	<!-- <factor code="9" name="žák ZŠ"/> -->
+    <!-- <factor code="10" name="student SŠ"/> -->
+    <!-- <factor code="11" name="student VŠ"/> -->
+    <factor code="12" name="osoba s vlastním zdrojem obživy, na rodičovské dovolené"/>
+    <factor code="13" name="osoba v domácnosti, dítě předškolního věku, ostatní závislé osoby"/>
+  </variable>
+  <variable code="P_work_status" name="Pracuji" question="Pracujete?" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_work_time_0" name="Mohu pracovat z domu" question="Mohu pracovat z domu" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_work_time_1" name="Mohu si zvolit začátek či konec pracovní doby" question="Mohu si zvolit začátek či konec pracovní doby" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_work_time_2" name="Mám pružnou pracovní dobu" question="Mám pružnou pracovní dobu" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_work_time_3" name="Pracuji na směny či turnusy" question="Pracuji na směny či turnusy" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_work_time_4" name="Nic z uvedeného" question="Nic z uvedeného" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_w_hours" name="Počet pracovních hodin za minulý měsíc" question="Kolik hodin jste za minulý měsíc přibližně odpracoval/a?" type="integer"/>
+  <variable code="P_driving_licence_B" name="Řidičský průkaz: B" question="Vlastníte řidičský průkaz na osobní automobily?" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_driving_licence_C" name="Řidičský průkaz: C" question="Vlastníte řidičský průkaz na nákladní automobily?" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_driving_licence_A" name="Řidičský průkaz: A" question="Vlastníte řidičský průkaz na osobní motocykl?" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_driving_licence_none" name="Nevlastním ŘP" question="Nevlastním řidičský průkaz" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_pt_0" name="Předplatná časová jízdenka na MHD / IDS (např. měsíční, roční atp.)" question="Vlastnictví předpůlatné jízdenky: Předplatná časová jízdenka na MHD / IDS (např. měsíční, roční atp.)" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_pt_1" name="Kreditová jízdenku na MHD / IDS" question="Vlastnictví předpůlatné jízdenky: Kreditová jízdenku na MHD / IDS" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_pt_2" name="Slevová jízdenka na vlak (např. In Karta)" question="Vlastnictví předpůlatné jízdenky: Slevová jízdenka na vlak (např. In Karta)" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_pt_3" name="Sleva na příměstskou nebo dálkovou jízdenku (např. žákovská sleva u ČD na konkrétní spojení)" question="Vlastnictví předpůlatné jízdenky: Slevu na příměstskou nebo dálkovou jízdenku (např. žákovská sleva u ČD na konkrétní spojení)" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_pt_4" name="Zlevněné lístky (např. průkaz ZTP nebo ISIC/ITIC)" question="Vlastnictví předpůlatné jízdenky: Zlevněné lístky (např. průkaz ZTP nebo ISIC/ITIC)" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_pt_5" name="Nic z uvedeného" question="Vlastnictví předpůlatné jízdenky: Nic z uvedeného" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_carpri_available" name="Počet dostupných soukromých aut" question="Osobní automobil soukromý" type="integer"/>
+  <variable code="P_carcom_available" name="Počet dostupných služebních aut" question="Osobní automobil služební" type="integer"/>
+  <variable code="P_carsha_available" name="Dostupnost carsharingu" question="Osobní automobil sdílený (carsharing)" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_caruti_available" name="Počet dostupných užitkových vozidel" question="Užitkový a nákladní automobil" type="integer"/>
+  <variable code="P_others_available" name="Počet dostupných jiných mot. vozidel" question="Jiné motorové vozidlo (např. motocykl, atp)" type="integer"/>
+  <variable code="P_bikes_available" name="Počet dostupných jízdních kol" question="Jízdní kolo" type="integer"/>
+  <variable code="P_triptoday" name="Cestování v rozhodném dni" question="Ve sledovaný den jsem: cestoval(a) / necestoval(a)" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="T_n" name="Počet cest v rozhodný den" question="" type="integer"/>
+  <variable code="P_caravail" name="Dispozice OA" question="" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_bikeavail" name="Dispozice kolem" question="" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_ptavail" name="Dispozice předplatným či slevou na VHD" question="" type="factor">
+    <factor code="1" name="ne"/>
+    <factor code="2" name="ano"/>
+  </variable>
+  <variable code="P_age" name="Věk" question="" type="factor">
+    <factor code="1" name="0-14"/>
+    <factor code="2" name="15-18"/>
+    <factor code="3" name="19-29"/>
+    <factor code="4" name="30-39"/>
+    <factor code="5" name="40-49"/>
+    <factor code="6" name="50-59"/>
+    <factor code="7" name="60-69"/>
+    <factor code="8" name="70+"/>
+  </variable>
+  <variable code="P_ea" name="Ekonomická aktivita" question="" type="factor">
+    <factor code="1" name="neaktivní"/>
+    <factor code="2" name="aktivní"/>
+  </variable>
+  <variable code="H_region" name="Kraj ČR" question="" type="factor">
+    <factor code="1" name="Hlavní město Praha"/>
+    <factor code="2" name="Středočeský kraj"/>
+    <factor code="3" name="Jihočeský kraj"/>
+    <factor code="4" name="Plzeňský kraj"/>
+    <factor code="5" name="Karlovarský kraj"/>
+    <factor code="6" name="Ústecký kraj"/>
+    <factor code="7" name="Liberecký kraj"/>
+    <factor code="8" name="Královéhradecký kraj"/>
+    <factor code="9" name="Pardubický kraj"/>
+    <factor code="10" name="Kraj Vysočina"/>
+    <factor code="11" name="Jihomoravský kraj"/>
+    <factor code="12" name="Olomoucký kraj"/>
+    <factor code="13" name="Zlínský kraj"/>
+    <factor code="14" name="Moravskoslezský kraj"/>
+  </variable>
+  <variable code="H_munpop" name="Velikost sídla" question="" type="factor">
+    <factor code="1" name="do 999"/>
+    <factor code="2" name="1 000-1 999"/>
+    <factor code="3" name="2 000-4 999"/>
+    <factor code="4" name="5 000-9 999"/>
+    <factor code="5" name="10 000-19 999"/>
+    <factor code="6" name="20 000-49 999"/>
+    <factor code="7" name="50 000-99 999"/>
+    <factor code="8" name="100 000+"/>
+  </variable>
+</codebook>

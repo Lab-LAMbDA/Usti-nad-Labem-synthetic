@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="windows-1250"?>
+<codebook code="H" name="Česko v pohybu (2017-2019), datová matice s domácnostmi" version="2.12 (CVUT)" created="2020-10-26" author="Centrum dopravního výzkumu, v. v. i." contact="petr.kouril@cdv.cz">
+  <variable code="H_ID" name="ID domácnosti" type="integer"/>
+  <variable code="H_orp_code" name="Kód ORP" type="integer"/>
+  <variable code="H_orp_name" name="Název ORP" type="integer"/>
+  <variable code="H_address_city" name="Název obce" type="integer"/>
+  <variable code="H_address_city_code" name="Kód obce (RUIAN)" type="integer"/>
+  <variable code="H_address_district" name="Název MOaMČ (RUIAN)" type="integer"/>
+  <variable code="H_address_district_code" name="Kód MOaMČ (RUIAN)" type="integer"/>
+  <variable code="H_date" name="Rozhodný den" question="Rozhodný den" type="character"/>
+  <variable code="H_persons" name="Počet osob v domácnosti" question="Kolik osob žije trvale ve Vaší domácnosti?" type="integer"/>
+  <variable code="H_persons_0005" name="Děti do 5 let věku" question="Počet dětí do 5 let" type="integer"/>
+  <variable code="H_persons_0617" name="Děti a dospívající od 6 do 17 let" question="Počet osob mezi 6-17 lety" type="integer"/>
+  <variable code="H_persons_1899" name="Dospělí starší 18 let" question="Počet osob starších 18 let" type="integer"/>
+  <variable code="H_income" name="Hrubý měsíční příjem domácnosti" question="Jaký je přibližně hrubý měsíční příjem Vaší domácnosti? Do odhadu prosím zahrňte příjmy ze zaměstnání, příjmy ze samostatného povolání, sociální příjmy a příjmy u pronájmu nemovitého majetku?" type="factor">
+    <factor code="1" name="Méně než 9 200 Kč"/>
+    <factor code="2" name="9 201–15 000 Kč"/>
+    <factor code="3" name="15 001–22 000 Kč"/>
+    <factor code="4" name="22 001–30 000 Kč"/>
+    <factor code="5" name="30 001–50 000 Kč"/>
+    <factor code="6" name="50 001 Kč a více"/>
+    <factor code="7" name="Nevím/Nechci odpovídat"/>
+  </variable>
+  <variable code="H_venr_car_private" name="Počet OA soukromých" question="Počet osobních automobilů soukromých v domácnosti" type="integer"/>
+  <variable code="H_venr_car_company" name="Počet OA služebních" question="Počet osobních automobilů služebních v domácnosti" type="integer"/>
+  <variable code="H_venr_util" name="Počet užitkových a nákladních A" question="Počet užitkových a nákladních automobilů soukromých v domácnosti" type="integer"/>
+  <variable code="H_venr_other" name="Počet motocyklů, mopedů nebo skútrů" question="Počet motocyklů, mopedů nebo skútrů" type="integer"/>
+  <variable code="H_venr_bike" name="Počet jízdních kol v domácnosti" question="Počet jízdních kol v domácnosti" type="integer"/>
+  <variable code="H_region" name="Kraj ČR" question="" type="factor">
+    <factor code="1" name="Hlavní město Praha"/>
+    <factor code="2" name="Středočeský kraj"/>
+    <factor code="3" name="Jihočeský kraj"/>
+    <factor code="4" name="Plzeňský kraj"/>
+    <factor code="5" name="Karlovarský kraj"/>
+    <factor code="6" name="Ústecký kraj"/>
+    <factor code="7" name="Liberecký kraj"/>
+    <factor code="8" name="Královéhradecký kraj"/>
+    <factor code="9" name="Pardubický kraj"/>
+    <factor code="10" name="Kraj Vysočina"/>
+    <factor code="11" name="Jihomoravský kraj"/>
+    <factor code="12" name="Olomoucký kraj"/>
+    <factor code="13" name="Zlínský kraj"/>
+    <factor code="14" name="Moravskoslezský kraj"/>
+  </variable>
+  <variable code="H_munpop" name="Velikost sídla" question="" type="factor">
+    <factor code="1" name="do 999"/>
+    <factor code="2" name="1 000-1 999"/>
+    <factor code="3" name="2 000-4 999"/>
+    <factor code="4" name="5 000-9 999"/>
+    <factor code="5" name="10 000-19 999"/>
+    <factor code="6" name="20 000-49 999"/>
+    <factor code="7" name="50 000-99 999"/>
+    <factor code="8" name="100 000+"/>
+  </variable>
+</codebook>
