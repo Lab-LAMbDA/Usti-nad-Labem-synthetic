@@ -1,4 +1,4 @@
-# Synthetic population generation for Ustí nad Labem (Czechia) based on the open methodology for the Sao Paulo Metropolitan Region
+# Synthetic population generation for Ústí nad Labem district (Czechia) by utilizing the Eqasim Framework
 
 - [How to use this pipeline to create your own scenario](docs/howto.md)
 
