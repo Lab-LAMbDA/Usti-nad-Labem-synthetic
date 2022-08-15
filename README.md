@@ -4,7 +4,7 @@
 
 ## Main reference
 
-The main research reference for the study is:
+The main research reference for this study is:
 > Coming soon
 
 The main research reference for the Eqasim Framework is:
