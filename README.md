@@ -5,10 +5,4 @@
 ## Main reference
 
 The main research reference for this study is:
-> Coming soon
-
-The main research reference for the Eqasim Framework is:
-> Hörl, S. & Balac, M. (2021). Open synthetic travel demand for Paris and Île-de-France: Inputs and output data, Data in Brief, Volume 39, 2021, https://doi.org/10.1016/j.dib.2021.107622
-
-The main approach utilized for the methodology is:
-> Sallard, A., Balać, M., Hörl, S. (2020). A synthetic population for the greater São Paulo metropolitan region. Arbeitsberichte Verkehrs-und Raumplanung, 1545, https://doi.org/10.3929/ethz-b-000429951
+> Pereira, A.M.; Dingil, A.E.; Přibyl, O.; Myška, V.; Vorel, J.; Kříž, M. An Advanced Travel Demand Synthesis Process for Creating a MATSim Activity Model: The Case of Ústí nad Labem. Appl. Sci. 2022, 12, 10032. https://doi.org/10.3390/app121910032
