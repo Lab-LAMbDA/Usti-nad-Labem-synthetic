@@ -42,14 +42,21 @@ def validate(context):
     if not os.path.exists(generalizations_file):
         raise RuntimeError("Input file must exist: %s" % generalizations_file)
 
-def assign_agents(df_persons, commute_coordinates, commute_caps, progress):
+def assign_agents(df_persons, commute_coordinates, commute_caps, purpose, progress):
 
     if "HomeX" in df_persons.columns:
         # If known where is the home location, ordering based on the primary location distance from home and capacities
         home_coordinates = df_persons[["HomeX", "HomeY"]].values
         commute_distances = df_persons["PrimaryLocCrowFliesTripDist"].values
-        indices,commute_caps = heuristic_primary_ordering(home_coordinates, commute_coordinates,
-                                                          commute_caps, commute_distances, progress)
+        try:
+            activities = df_persons["Activity"].values
+        except KeyError:
+            try:
+                activities = df_persons["ActivityCityHTS"].values
+            except KeyError:
+                activities = df_persons["ActivityCzechiaHTS"].values
+        indices,commute_caps = heuristic_primary_ordering(home_coordinates, commute_coordinates, activities,
+                                                          commute_caps, commute_distances, purpose, progress)
         return indices,commute_caps
     else:
         # If not know where is the home location, ordering only based on the capacities
@@ -71,11 +78,12 @@ def heuristic_home_ordering(num_persons, home_caps, progress):
 
     return indices, home_caps
 
-def heuristic_primary_ordering(home_coordinates, commute_coordinates, commute_caps, commute_distances, progress):
+def heuristic_primary_ordering(home_coordinates, commute_coordinates, activities, commute_caps, commute_distances,
+                               purpose, progress):
 
     indices = []
 
-    for home_coordinate, commute_distance in zip(home_coordinates, commute_distances):
+    for home_coordinate, commute_distance, activity in zip(home_coordinates, commute_distances, activities):
         # Calculate the distance of the filtered facilities to home location
         distances = np.sqrt(np.sum((commute_coordinates - home_coordinate)**2, axis = 1))
         # Set up the cost as the difference between the facility distance (from home location) with the crow flies distance
@@ -89,7 +97,9 @@ def heuristic_primary_ordering(home_coordinates, commute_coordinates, commute_ca
             # If at least one filtered facility with available capacity, choose the one with lowest cost
             index = np.argmin(costs)
         # Reduce the number of available capacity (i.e. number of persons not assigned yet)
-        commute_caps[index] -= 1
+        # For people with education trips but not mainly students (i.e. parents taking kids to school), don't reduce
+        if purpose != "education" or activity == '2':
+            commute_caps[index] -= 1
         indices.append(index)
         progress.update(1)
 
@@ -105,7 +115,7 @@ def impute_diff_zone_locations(df_persons, df_zones, df_locations, purpose):
 
     all_counts = sum([zone_count for zone_count in df_counts["count"]])
 
-    progress = tqdm(df_impute, position=0, leave=False, total=all_counts)
+    progress = tqdm(df_impute, position=0, leave=False, total=all_counts, ascii=True)
     progress.set_description("Sampling coordinates for different zones")
     for zone_id, count, shape in progress:
         if count > 0:
@@ -171,7 +181,7 @@ def impute_diff_zone_locations(df_persons, df_zones, df_locations, purpose):
             f = df_persons["ZoneID"] == zone_id
 
             # Assign the locations (either real ones or random points when none available)
-            indices,caps = assign_agents(df_persons[f], points, caps, progress)
+            indices,caps = assign_agents(df_persons[f], points, caps, purpose, progress)
 
             df_persons.loc[f, "x"] = points[indices, 0]
             df_persons.loc[f, "y"] = points[indices, 1]
@@ -205,7 +215,7 @@ def impute_diff_zone_locations(df_persons, df_zones, df_locations, purpose):
 def impute_primary_locations_same_zone(hts_trips, df_ag, df_candidates, purpose):
 
     with tqdm(total=len(df_ag), desc="Sampling coordinates same zones",
-              leave=False, position=0) as progress:
+              leave=False, position=0, ascii=True) as progress:
 
         hts_trip = hts_trips.copy()
 
@@ -328,6 +338,9 @@ def execute(context):
 
     # Get all locations/facilities
     df_facilities = context.stage("synthesis.destinations")
+    df_facilities["Inhabitants"] = df_facilities["Inhabitants"].astype(float)
+    df_facilities["WorkPlaces"] = df_facilities["WorkPlaces"].astype(float)
+    df_facilities["StudyPlaces"] = df_facilities["StudyPlaces"].astype(float)
 
     # Get the attributes of the population
     df_commute = context.stage("synthesis.population.sociodemographics")[["PersonID",

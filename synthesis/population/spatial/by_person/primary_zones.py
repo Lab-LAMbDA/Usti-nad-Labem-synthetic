@@ -43,7 +43,7 @@ def execute(context):
     # Define the persons/agents' work zone given zones weight (from OD proportion as origin point of the trip)
     df_work = []
 
-    for origin_id in tqdm(np.unique(df_persons["ZoneID"]), desc = "Sampling work zones"):
+    for origin_id in tqdm(np.unique(df_persons["ZoneID"]), desc = "Sampling work zones", ascii=True):
         f = (df_persons["ZoneID"] == origin_id) & df_persons["HasWorkTrip"]
         df_origin = pd.DataFrame(df_persons[f][["PersonID", "ActivitySector"]], copy = True)
         df_destination = df_work_od[df_work_od["OriginID"] == origin_id]
@@ -64,7 +64,7 @@ def execute(context):
     # Define the persons/agents' work zone given zones weight (from OD proportion as origin point of the trip)
     df_education = []
 
-    for origin_id in tqdm(np.unique(df_persons["ZoneID"]), desc = "Sampling education zones"):
+    for origin_id in tqdm(np.unique(df_persons["ZoneID"]), desc = "Sampling education zones", ascii=True):
         f = (df_persons["ZoneID"] == origin_id) & df_persons["HasEducationTrip"]
         df_origin = pd.DataFrame(df_persons[f][["PersonID", "AgeGroup"]], copy = True)
         df_destination = df_education_od[df_education_od["OriginID"] == origin_id]

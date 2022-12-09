@@ -65,7 +65,7 @@ def prepare_destinations(context):
     df_destinations = context.stage("synthesis.destinations")
     identifiers = df_destinations["LocationID"].values
     locations = np.vstack(df_destinations["geometry"].centroid.apply(lambda x: np.array([x.x, x.y])).values)
-    capacities = df_destinations["Visitors"].values
+    capacities = df_destinations["Visitors"].values.astype(float)
 
     df_destinations = df_destinations.drop(["FacilityPurpose"], axis=1)
 
@@ -225,8 +225,8 @@ def execute(context):
     for df_ind, (df_primary, hts_distributions) in enumerate(zip(all_df_primary, hts_distance_distributions)):
         print(" For HTS", df_ind)
 
-        # Resample the DeclaredTripTime distribution per trip mode for adjustments when results not conforming
-        # (not at the moment)
+        # Resample the CrowFliesTripDist distribution per trip mode based on intervals of DeclaredTripTime
+        # for adjustments when results not conforming (not at the moment)
         resample_distributions(hts_distributions, {
             "1": 0.0,  # on foot
             "2": 0.0,  # bike

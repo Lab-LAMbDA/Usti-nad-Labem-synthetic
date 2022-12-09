@@ -62,7 +62,7 @@ def execute(context):
 
     print("Preparing sociodemographics of matched population")
 
-    all_df_matching, _ = context.stage("synthesis.population.matched")
+    all_df_matching = context.stage("synthesis.population.matched")
     all_df_persons = context.stage("synthesis.population.sampled")
     all_df_hts = list(context.stage("data.hts.cleaned"))
     df_routes_gate = pd.read_excel("%s/%s" % (context.config("data_path"), context.config("routes_file")),
@@ -121,7 +121,7 @@ def execute(context):
             # 'FlexibleBegEndTime', # potential useful info
             'FlexibleHours',
             # 'AvailCarSharing', # potential useful info
-            "AvailCar", "AvailBike", "DrivingLicense", "PtSubscription", "IsPassenger",
+            "AvailCar", "AvailBike", "DrivingLicense", "PtSubscription",
         ]]
 
         # Merge attributes from HTS (keep Census data if overlapping attributes)
@@ -167,7 +167,7 @@ def execute(context):
         # Change the real town ID to synthetic gate ID if zone is not within the district
         df_groups = df_routes_gate.groupby("GATEosm_id")
         desc = "Change the real town ID to synthetic gate ID if zone is not within the district for df_ind: " + str(df_ind)
-        for GATEosm_id, places_via_gate in tqdm(df_groups, total=len(df_groups),
+        for GATEosm_id, places_via_gate in tqdm(df_groups, total=len(df_groups), ascii=True,
                                                 desc=desc):
             cities_gate_ids = places_via_gate["KOD_LAU2"].dropna().values.tolist()
 

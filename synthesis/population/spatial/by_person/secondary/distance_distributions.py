@@ -41,7 +41,7 @@ def execute(context):
                           "5"  # Education
                           ]
 
-    print("Defining distributions of DeclaredTripTime per trip mode")
+    print("Defining distributions of CrowFliesTripDist for DeclaredTripTime intervals per trip mode")
 
     # Define distributions of DeclaredTripTime per trip mode
     for (df_persons, df_trips) in [[df_persons_CzechiaHTS, df_trips_CzechiaHTS], [df_persons_CityHTS, df_trips_CityHTS]]:

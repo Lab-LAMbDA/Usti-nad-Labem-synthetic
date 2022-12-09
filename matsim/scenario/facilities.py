@@ -47,6 +47,10 @@ def execute(context):
                                                         ["PersonID", "geometry"]]
     df_activities = pd.merge(df_activities, df_location_activities, how="left", on=["PersonID"])
 
+    # MATSIM don't support Czech's Krovak coordinate system (epsg:5514)
+    df_destinations = df_destinations.to_crs(epsg=4326)
+    df_activities.geometry = df_activities.geometry.values.to_crs(epsg=4326)
+
     # not at the moment
     # df_homes = context.stage("synthesis.population.spatial.by_person.primary_locations")[0]
     # df_homes = df_homes[HOME_FIELDS].drop_duplicates(subset='HouseholdID',keep='first')
@@ -58,7 +62,7 @@ def execute(context):
             writer.start_facilities()
 
             for item in tqdm(df_destinations.itertuples(index=False),
-                               desc="Writing facilities ...",
+                               desc="Writing facilities ...", ascii=True,
                                position=0, leave=False):
                 geometry = item[FACILITY_FIELDS.index("geometry")]
 
@@ -82,7 +86,7 @@ def execute(context):
 
             # As (at the moment) we are not assigning people to households, we use one household for every person
             for activity in tqdm(df_activities.itertuples(index=False),
-                                 desc="Writing homes ...",
+                                 desc="Writing homes ...", ascii=True,
                                  position=0, leave=False):
                 geometry = activity[ACTIVITY_FIELDS.index("geometry")]
 
@@ -101,7 +105,7 @@ def execute(context):
 
             # Not at the moment
             # for item in tqdm(df_homes.itertuples(index=False),
-            #                  desc="Writing homes ...",
+            #                  desc="Writing homes ...", ascii=True,
             #                  position=0, leave=False):
             #     geometry = item[HOME_FIELDS.index("geometry")]
             #

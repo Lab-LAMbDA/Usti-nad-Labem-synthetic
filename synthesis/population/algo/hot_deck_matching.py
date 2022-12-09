@@ -5,7 +5,7 @@ import multiprocessing as mp
 import concurrent.futures
 
 class HotDeckMatcher:
-    def __init__(self, df_source, source_id, source_weight, mandatory_fields, preference_fields, default_id,
+    def __init__(self, df_source, source_id, target_id, source_weight, mandatory_fields, preference_fields, default_id,
                  minimum_source_samples):
 
         # Initialize class
@@ -13,6 +13,8 @@ class HotDeckMatcher:
         self.preference_fields = preference_fields
         self.all_fields = self.mandatory_fields + self.preference_fields
         self.default_id = default_id
+        self.source_id = source_id
+        self.target_id = target_id
         self.minimum_source_samples = minimum_source_samples
 
         self.values = {
@@ -28,7 +30,8 @@ class HotDeckMatcher:
 
         self.source_matrix = self.make_matrix(df_source, source = True)
         self.source_weights = df_source[source_weight]
-        self.source_ids = df_source[source_id]
+        self.df_source = df_source
+        self.source_ids = self.df_source[self.source_id]
 
         search_order = [
             [list(np.arange(size) == k) for k in range(size)] +
@@ -46,7 +49,7 @@ class HotDeckMatcher:
 
         with tqdm(total = columns,
                   desc = "Reading categories (%s) ..." % ("source" if source else "target"),
-                  position = 0, leave=False) as progress:
+                  position = 0, ascii=True, leave=False) as progress:
             for field_name in self.all_fields:
                 for field_value in self.values[field_name]:
                     matrix[:, column_index] = df[field_name] == field_value
@@ -60,16 +63,17 @@ class HotDeckMatcher:
 
         matched_mask = np.zeros((len(df_target),), dtype = np.bool)
         matched_indices = np.ones((len(df_target), ), dtype = np.int) * -1
+        self.target_ids = df_target[self.target_id]
 
         # Note: This speeds things up quite a bit. We generate a random number
         # for each person which is later on used for the sampling.
         random = np.array([
             np.random.random() for _ in tqdm(range(len(df_target)), desc = "Generating random numbers",
-                                             position = 0, leave=False)
+                                             position = 0, ascii=True, leave=False)
         ])
 
         with tqdm(total=len(self.field_masks), position=0, ascii=True, leave=False) as progress:
-            progress.set_description("Hot Deck Matching Chunk: " + str(chunk_index))
+            progress.set_description("Hot Deck Matching")
             for field_mask in self.field_masks:
                 field_mask = np.array(functools.reduce(lambda x, y: x + y, field_mask), dtype = np.bool)
                 source_mask = np.all(self.source_matrix[:, field_mask], axis = 1)
@@ -109,30 +113,10 @@ def run(df_target, target_id, df_source, source_id, source_weight, mandatory_fie
     else:
         print("")
 
-    matcher = HotDeckMatcher(df_source, source_id, source_weight, mandatory_fields, preference_fields, default_id,
+    matcher = HotDeckMatcher(df_source, source_id, target_id, source_weight, mandatory_fields, preference_fields, default_id,
                              minimum_source_samples)
 
-    if runners == -1:
-        runners = mp.cpu_count()
-
-    if runners > len(df_target):
-        runners = len(df_target)
-
-    if runners <= 1:
-        df_target.loc[:, "hdm_source_id"] = matcher(df_target, 0)
-    else:
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=runners,
-                                                   initializer = initializer,
-                                                   initargs = (matcher,)
-                                                   ) as executor:
-            chunks = np.array_split(df_target, runners)
-            futures = {executor.submit(matcher,
-                                       chunk_df, chunk_ind)
-                       for chunk_ind, chunk_df in enumerate(chunks)}
-            concurrent.futures.wait(futures)
-            df_target.loc[:, "hdm_source_id"] = np.hstack([df.result() for df in list(futures)])
-            for i in range(runners + 1): print(" ")  # Formatting of output
+    df_target.loc[:, "hdm_source_id"] = matcher(df_target, 0)
 
 matcher = None
 def initializer(_matcher):

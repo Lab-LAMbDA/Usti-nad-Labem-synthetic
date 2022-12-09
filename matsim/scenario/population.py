@@ -17,7 +17,7 @@ PERSON_FIELDS = [
     'Gender',
     "Age",
     "hts_PersonID",
-    "AvailCar", "AvailBike", "DrivingLicense", "PtSubscription", "IsPassenger",
+    "AvailCar", "AvailBike", "DrivingLicense", "PtSubscription",
     # 'Homeoffice', # potential useful info
     # 'FlexibleBegEndTime', # potential useful info
     # 'FlexibleHours', # potential useful info
@@ -32,8 +32,12 @@ TRIP_FIELDS = [
     "PersonID", "TripMainMode", "OriginStart", "DeclaredTripTime"
 ]
 
-TRIP_MODES = ["walk", "bike", "pt", "bus", "train", "car", "car_passenger",
-              "taxi", # classified as other but used as taxi in MATsim
+TRIP_MODES = ["walk", "bike", # active transport
+              "pt", # city public transport
+              "pt", # bus (except city public transport)
+              "train", # train (except city public transport)
+              "car", "ride", # personal motorized transport
+              "ride", # classified as other but used as ride in MATsim
               ]
 
 def configure(context):
@@ -55,22 +59,25 @@ def add_person(writer, person, activities, trips):
     writer.start_attributes()
     # writer.add_attribute("householdId", "java.lang.Integer", person[PERSON_FIELDS.index("HouseholdID")]) # not at the moment
 
-    writer.add_attribute("carAvailability", "java.lang.String", "always" if person[PERSON_FIELDS.index("AvailCar")] else "never")
-    writer.add_attribute("bikeAvailability", "java.lang.String", "always" if person[PERSON_FIELDS.index("AvailBike")] else "never")
+    writer.add_attribute("carAvailability", "java.lang.String",
+                         writer.always_never(person[PERSON_FIELDS.index("AvailCar")]))
+    writer.add_attribute("bikeAvailability", "java.lang.String",
+                         writer.always_never(person[PERSON_FIELDS.index("AvailBike")]))
 
-    writer.add_attribute("htsPersonId", "java.lang.Long", person[PERSON_FIELDS.index("hts_PersonID")])
+    writer.add_attribute("htsPersonId", "java.lang.String", person[PERSON_FIELDS.index("hts_PersonID")])
 
-    writer.add_attribute("hasPtSubscription", "java.lang.Boolean", person[PERSON_FIELDS.index("PtSubscription")])
-    writer.add_attribute("hasLicense", "java.lang.String", writer.yes_no(person[PERSON_FIELDS.index("DrivingLicense")]))
-
-    writer.add_attribute("isPassenger", "java.lang.Boolean", person[PERSON_FIELDS.index("IsPassenger")])
+    writer.add_attribute("hasPtSubscription", "java.lang.Boolean",
+                         writer.true_false(person[PERSON_FIELDS.index("PtSubscription")]))
+    writer.add_attribute("hasLicense", "java.lang.String",
+                         writer.yes_no(person[PERSON_FIELDS.index("DrivingLicense")]))
 
     writer.add_attribute("age", "java.lang.Integer", person[PERSON_FIELDS.index("Age")])
-    writer.add_attribute("employment", "java.lang.String", "yes" if person[PERSON_FIELDS.index("Activity") in ("1",
-                                                                                                               "2",
-                                                                                                               "3")]
-                                                                 else "no")
-    writer.add_attribute("sex", "java.lang.String", "man" if person[PERSON_FIELDS.index("Gender")] == "1" else "woman")
+    writer.add_attribute("employment", "java.lang.String",
+                         "yes" if person[PERSON_FIELDS.index("Activity")] in ("1", "2", "3")
+                         else "no")
+    writer.add_attribute("sex", "java.lang.String",
+                         "man" if person[PERSON_FIELDS.index("Gender")] == "1"
+                         else "woman")
 
     writer.end_attributes()
 
@@ -124,6 +131,9 @@ def execute(context):
     df_activities = pd.merge(df_activities, df_location_activities, how = "left", on = ["PersonID", "TripOrderNum"])
     df_activities["DestinationID"] = df_activities["DestinationID"].fillna(-1).astype(str)
 
+    # MATSIM don't support Czech's Krovak coordinate system (epsg:5514)
+    df_activities.geometry = df_activities.geometry.values.to_crs(epsg=4326)
+
     df_trips = context.stage("synthesis.population.trips").sort_values(by = ["PersonID", "TripOrderNum"])
     df_trips["TravelTime"] = df_trips["DestEnd"] - df_trips["OriginStart"]
 
@@ -136,39 +146,42 @@ def execute(context):
             activity_iterator = backlog_iterator(iter(df_activities[ACTIVITY_FIELDS].itertuples(index = False)))
             trip_iterator = backlog_iterator(iter(df_trips[TRIP_FIELDS].itertuples(index = False)))
 
-            for person in tqdm(df_persons.itertuples(index = False),
-                      desc="Writing population ...",
-                      position=0, leave=False):
-                person_id = person[PERSON_FIELDS.index("PersonID")]
+            with tqdm(df_persons.itertuples(index = False), total=len(df_persons),
+                      desc="Writing population ...", ascii=True,
+                      position=0, leave=False) as progress:
+                for person in progress:
+                    person_id = person[PERSON_FIELDS.index("PersonID")]
 
-                activities = []
-                trips = []
+                    activities = []
+                    trips = []
 
-                # Track all activities for person
-                while activity_iterator.has_next():
-                    activity = activity_iterator.next()
+                    # Track all activities for person
+                    while activity_iterator.has_next():
+                        activity = activity_iterator.next()
 
-                    if not activity[ACTIVITY_FIELDS.index("PersonID")] == person_id:
-                        activity_iterator.previous()
-                        break
-                    else:
-                        activities.append(activity)
+                        if not activity[ACTIVITY_FIELDS.index("PersonID")] == person_id:
+                            activity_iterator.previous()
+                            break
+                        else:
+                            activities.append(activity)
 
-                assert len(activities) > 0
+                    assert len(activities) > 0
 
-                # Track all trips for person
-                while trip_iterator.has_next():
-                    trip = trip_iterator.next()
+                    # Track all trips for person
+                    while trip_iterator.has_next():
+                        trip = trip_iterator.next()
 
-                    if not trip[TRIP_FIELDS.index("PersonID")] == person_id:
-                        trip_iterator.previous()
-                        break
-                    else:
-                        trips.append(trip)
+                        if not trip[TRIP_FIELDS.index("PersonID")] == person_id:
+                            trip_iterator.previous()
+                            break
+                        else:
+                            trips.append(trip)
 
-                assert len(trips) == len(activities) - 1
+                    assert len(trips) == len(activities) - 1
 
-                add_person(writer, person, activities, trips)
+                    add_person(writer, person, activities, trips)
+
+                    progress.update()
 
             writer.end_population()
 

@@ -183,7 +183,7 @@ def execute(context):
                 # Change the real town ID to synthetic gate ID if real town is not within Ustí nad Labem district
                 # Not necessary country/state because CzechiaHTS trips does not account country
                 df_groups = df_routes_gate.groupby("GATEosm_id")
-                for GATEosm_id, places_via_gate in tqdm(df_groups, total=len(df_groups),
+                for GATEosm_id, places_via_gate in tqdm(df_groups, total=len(df_groups), ascii=True,
                                                         desc="Changing real town ID to synthetic gate ID, "
                                                              "if zone is not within the district (for CzechiaHTS)"):
                     cities_gate_ids = places_via_gate["KOD_LAU2"].dropna().values.tolist()
@@ -200,7 +200,7 @@ def execute(context):
                 # Change the real town ID to synthetic gate ID if town code is unknown (but known district code)
                 # Select (probabilistically) the most suitable gate
                 df_groups = df_routes_gate.groupby("KOD_ORP")
-                for district_code, df_region in tqdm(df_groups, total=len(df_groups),
+                for district_code, df_region in tqdm(df_groups, total=len(df_groups), ascii=True,
                                                      desc="Changing real town ID to synthetic gate ID,"
                                                           " if the town code is unknown (for CzechiaHTS)"):
 
@@ -250,7 +250,7 @@ def execute(context):
 
                 # Change the real cadastral area IDs to synthetic gate ID if the town code is unknown
                 df_groups = df_routes_gate.groupby("GATEosm_id")
-                for GATEosm_id, places_via_gate in tqdm(df_groups, total=len(df_groups),
+                for GATEosm_id, places_via_gate in tqdm(df_groups, total=len(df_groups), ascii=True,
                                                         desc="Changing real cadastral area ID to synthetic gateID,"
                                                              " if the town code is unknown (for CityHTS)"):
 

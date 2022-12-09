@@ -23,11 +23,14 @@ class XmlWriter:
         if not self.scope == scope:
             raise RuntimeError("Expected different scope")
 
+    def always_never(self, value):
+        return "always" if int(value) else "never"
+
     def yes_no(self, value):
-        return "yes" if value else "no"
+        return "yes" if int(value) else "no"
 
     def true_false(self, value):
-        return "true" if value else "false"
+        return "true" if int(value) else "false"
 
     def time(self, time):
         if np.isnan(time):

@@ -381,7 +381,7 @@ def execute(context):
             cols_no_purpose = list(df_facilities_osm.columns)
             cols_no_purpose.remove("purpose")
 
-            progress = tqdm(duplicated_osmIDs, total=len(duplicated_osmIDs),
+            progress = tqdm(duplicated_osmIDs, total=len(duplicated_osmIDs), ascii=True,
                             desc="Merging FacilityPurpose for duplicated osmID")
             for duplicated_osmID in progress:
                 duplicated_indices = df_facilities_osm.osmID == duplicated_osmID
@@ -420,7 +420,7 @@ def execute(context):
             unknown_osm_data = df_facilities_osm[df_facilities_osm["osmID"].isin(unknown_osmIDs)][["osmID", "purpose",
                                                                                                    "geometry"]].copy()
             new_known_purposes = dict()
-            progress = tqdm(unknown_osm_data.geometry.items(), total=len(unknown_osm_data),
+            progress = tqdm(unknown_osm_data.geometry.items(), total=len(unknown_osm_data), ascii=True,
                                              desc="Assigning the purposes of places inside buildings "
                                                   "to buildings' purposes")
             for ind,unknown_osm_geometry in progress:
@@ -505,7 +505,7 @@ def execute(context):
         shorter_all_cols.remove("Visitors")
         matched_work_home_secondary = pd.DataFrame(columns=shorter_all_cols)
 
-        progress = tqdm(enumerate(matched_osmIDs), total=len(matched_osmIDs),
+        progress = tqdm(enumerate(matched_osmIDs), total=len(matched_osmIDs), ascii=True,
                         desc="Merging FacilityPurpose when same osmID at work_home and secondary facilities")
         for ind_matched, matched_osmID in progress:
             ind_work_home = df_facilities_work_home.index[df_facilities_work_home.osmID == matched_osmID]
@@ -649,7 +649,7 @@ def execute(context):
 
     # Add one facility for any attributes and without capacities on the synthetic gates of Ustí nad Labem district
     # for trips outside the study area
-    for _,gate_data in tqdm(df_zones_gates.iterrows(), total=len(df_zones_gates),
+    for _,gate_data in tqdm(df_zones_gates.iterrows(), total=len(df_zones_gates), ascii=True,
                              desc="Adding one facility for each FacilityPurpose and FacilityUsage on the gates of the "
                                   "study area"):
         gateID = gate_data["ZoneID"]

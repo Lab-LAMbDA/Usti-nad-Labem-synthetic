@@ -1,4 +1,4 @@
-,PersonID,ActivityCVP,ActivityVISUM,ActivitySector,EducationPlace,Age,AgeGroup,BasicSettlementCode,CadastralAreaCode,DistrictCode,DeclaredJourneyTime,Education,Gender,JourneyMainMode,PrimaryLocTownCode,PrimaryLocDistrictCode,PrimaryLocRegionCode,PrimaryLocStateCode,PrimaryLocRelationHome,TownCode,TownSize,RegionCode
+,PersonID,ActivityCzechiaHTS,ActivityCityHTS,ActivitySector,EducationPlace,Age,AgeGroup,BasicSettlementCode,CadastralAreaCode,DistrictCode,DeclaredJourneyTime,Education,Gender,JourneyMainMode,PrimaryLocTownCode,PrimaryLocDistrictCode,PrimaryLocRegionCode,PrimaryLocStateCode,PrimaryLocRelationHome,TownCode,TownSize,RegionCode
 0,1,1,1,7,4,37,4,1786830,778681,4214,1,2,2,6,554804,4214,3069,203,1,568350,4,CZ042
 1,2,1,1,7,4,37,4,1786830,778681,4214,2,2,2,6,568350,4214,3069,203,6,568350,4,CZ042
 2,3,3,2,99,3,26,3,1268110,726818,4214,2,1,1,5,554804,4214,3069,203,1,568155,4,CZ042

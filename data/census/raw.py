@@ -176,7 +176,7 @@ def execute(context):
     CadastralCodes = []
     DistrictCodes = []
     RegionCodes = []
-    for person_ind, person_data in tqdm(df_census.iterrows(), total=len(df_census), desc="Adding territorial codes"):
+    for person_ind, person_data in tqdm(df_census.iterrows(), total=len(df_census), ascii=True, desc="Adding territorial codes"):
         row_data = df_codes.loc[df_codes['KOD_ZSJ'] == person_data["BasicSettlementCode"]]
         assert len(row_data) == 1
         CadastralCodes.append(row_data.iloc[0]['KOD_KU'])

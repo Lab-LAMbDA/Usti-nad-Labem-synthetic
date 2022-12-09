@@ -46,7 +46,7 @@ def execute(context):
             writer.start_households()
 
             for item in tqdm(df_persons.itertuples(index = False),
-                               desc="Writing households ...",
+                               desc="Writing households ...", ascii=True,
                                position=0, leave=False):
                 if current_household_id != item[FIELDS.index("HouseholdID")]:
                     if not current_household_id is None:

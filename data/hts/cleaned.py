@@ -290,7 +290,7 @@ def execute(context):
     RegionCodes = []
     df_codes_KRAJ = df_codes[['KOD_KRAJ', 'NAZEV_KRAJ']].drop_duplicates()
 
-    for _, person_data in tqdm(df_CzechiaHTS_h_reduced.iterrows(), total=len(df_CzechiaHTS_h_reduced),
+    for _, person_data in tqdm(df_CzechiaHTS_h_reduced.iterrows(), total=len(df_CzechiaHTS_h_reduced), ascii=True,
                                desc="Changing column RegionName to RegionCode for each person in CzechiaHTS"):
         row_data = df_codes_KRAJ.loc[df_codes_KRAJ['NAZEV_KRAJ'] == person_data["H_region"]]
         assert len(row_data) == 1
@@ -301,7 +301,7 @@ def execute(context):
     # For CzechiaHTS, some attributes are in text, change to numbers
     dfs = [df_CzechiaHTS_p_reduced, df_CzechiaHTS_h_reduced, df_CzechiaHTS_t_reduced]
     descrs = [descr_CzechiaHTS_persons, descr_CzechiaHTS_households, descr_CzechiaHTS_trips]
-    for ind, df in tqdm(enumerate(dfs), total=len(dfs),
+    for ind, df in tqdm(enumerate(dfs), total=len(dfs), ascii=True,
                                desc="For CzechiaHTS, some attributes are in text, changing to numbers"):
         df = df.copy()
         cols = df.columns
@@ -608,7 +608,7 @@ def execute(context):
     # Generate TripOrderNum for each trip of each person for CityHTS data
     TripOrderNums = pd.DataFrame(columns=['TripID', 'TripOrderNum'])
     last_personID = None
-    for _, trip_data in tqdm(df_CityHTS_t.sort_values(by=['TripID']).iterrows(), total=len(df_CityHTS_t),
+    for _, trip_data in tqdm(df_CityHTS_t.sort_values(by=['TripID']).iterrows(), total=len(df_CityHTS_t), ascii=True,
                              desc="Generating TripOrderNum for each trip of each person for CityHTS data"):
         personID = trip_data['PersonID']
         tripID = trip_data['TripID']
@@ -636,7 +636,8 @@ def execute(context):
         pers_id = list(set(df_trips["PersonID"].values.tolist()))
         to_remove = set([])
         global broke_loop
-        for pid in tqdm(pers_id, desc="Cleaning HTS trips for df " + str(df_ind + 1) + " out of " + str(num_dfs)):
+        for pid in tqdm(pers_id, desc="Cleaning HTS trips for df " + str(df_ind + 1) + " out of " + str(num_dfs),
+                        ascii=True):
             df_i = df_trips[df_trips["PersonID"] == pid]
             df_i.sort_values(by=["TripOrderNum"])
             purposes = []
@@ -738,7 +739,7 @@ def execute(context):
     # Use only column CrowFliesTripDist for CzechiaHTS, but if not data, then use the following priority:
     # a) CalculatedTripDist
     # b) DeclaredTripDist
-    for ind, trip_data in tqdm(df_CzechiaHTS_t.iterrows(), total= len(df_CzechiaHTS_t),
+    for ind, trip_data in tqdm(df_CzechiaHTS_t.iterrows(), total= len(df_CzechiaHTS_t), ascii=True,
                                desc="Setting either CalculatedTripDist or DeclaredTripDist "
                                     "as CrowFliesTripDist for CzechiaHTS"):
         if pd.isna(trip_data['CrowFliesTripDist']):
@@ -754,7 +755,7 @@ def execute(context):
 
     # Calculate CrowFliesTripDist for CityHTS, using GPS coordinates
     CrowFliesTripDists = pd.DataFrame(columns=['TripID', 'CrowFliesTripDist'])
-    for ind, trip_data in tqdm(df_CityHTS_t.iterrows(), total=len(df_CityHTS_t),
+    for ind, trip_data in tqdm(df_CityHTS_t.iterrows(), total=len(df_CityHTS_t), ascii=True,
                                desc="Calculating CrowFliesTripDist for CityHTS, using GPS coordinates"):
         trip_id = trip_data["TripID"]
         trip_dist = geopy.distance.distance((trip_data["LatOrigin"], trip_data["LonOrigin"]),
@@ -837,7 +838,6 @@ def execute(context):
     # e) PrimaryLocDistrictCodes for each person (the trip to primary location)
     # f) PrimaryLocCrowFliesTripDist for each person (the trip to primary location)
     # g) JourneyMainMode for each person
-    # h) IsPassenger for each trip (the trip to primary location)
     PrimaryLocRelationHomes = pd.DataFrame(columns=['PersonID', 'PrimaryLocRelationHome'])
     JourneyMainModes = pd.DataFrame(columns=['PersonID', 'JourneyMainMode'])
     DeclaredJourneyTimes = pd.DataFrame(columns=['PersonID', 'DeclaredJourneyTime'])
@@ -845,11 +845,10 @@ def execute(context):
     PrimaryLocStateNames = pd.DataFrame(columns=['PersonID', 'PrimaryLocStateName'])
     PrimaryLocDistrictCodes = pd.DataFrame(columns=['PersonID', 'PrimaryLocDistrictCode'])
     PrimaryLocCrowFliesTripDists = pd.DataFrame(columns=['PersonID', 'PrimaryLocCrowFliesTripDist'])
-    IsPassengers = pd.DataFrame(columns=['PersonID', 'IsPassenger'])
     HasWorkTrips = pd.DataFrame(columns=['PersonID', 'HasWorkTrip'])
     HasEducationTrips = pd.DataFrame(columns=['PersonID', 'HasEducationTrip'])
     max_DeclaredTripTime = df_CzechiaHTS_t['DeclaredTripTime'].max()
-    for person_id, trips_data in tqdm(df_CzechiaHTS_t.groupby('PersonID'), total=len(df_CzechiaHTS_ph),
+    for person_id, trips_data in tqdm(df_CzechiaHTS_t.groupby('PersonID'), total=len(df_CzechiaHTS_ph), ascii=True,
                                desc="Generating missing data (i.e. add columns) to match CzechiaHTS with Census data"):
         person_row = df_CzechiaHTS_ph.loc[df_CzechiaHTS_ph['PersonID'] == person_id]
         home_town_code = person_row.iloc[0]['TownCode']
@@ -905,7 +904,6 @@ def execute(context):
             DeclaredTripTime = trip_data['DeclaredTripTime']
             CrowFliesTripDist = trip_data['CrowFliesTripDist']
             trip_main_mode = trip_data['TripMainMode']
-            passenger_bool = trip_main_mode == '7'
             to_append = pd.Series([person_id, trip_main_mode], index=JourneyMainModes.columns)
             JourneyMainModes = JourneyMainModes.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, DeclaredTripTime], index=DeclaredJourneyTimes.columns)
@@ -918,8 +916,6 @@ def execute(context):
             PrimaryLocStateNames = PrimaryLocStateNames.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, CrowFliesTripDist], index=PrimaryLocCrowFliesTripDists.columns)
             PrimaryLocCrowFliesTripDists = PrimaryLocCrowFliesTripDists.append(to_append, ignore_index=True)
-            to_append = pd.Series([person_id, passenger_bool], index=IsPassengers.columns)
-            IsPassengers = IsPassengers.append(to_append, ignore_index=True)
 
             if has_work_trip:
                 to_append = pd.Series([person_id, True], index=HasWorkTrips.columns)
@@ -937,9 +933,16 @@ def execute(context):
             # No work and school trip, treat as not economically active people
             to_append = pd.Series([person_id, '88'], index=PrimaryLocRelationHomes.columns)
             PrimaryLocRelationHomes = PrimaryLocRelationHomes.append(to_append, ignore_index=True)
-            to_append = pd.Series([person_id, '999'], index=JourneyMainModes.columns)
+
+            # Select as the main trip the longest one
+            trip_data = trips_data.loc[trips_data['DeclaredTripTime'] == max(trips_data['DeclaredTripTime'])]
+            trip_data = trip_data.iloc[0]  # take only the first trip of the main journey
+            DeclaredTripTime = trip_data['DeclaredTripTime']
+            trip_main_mode = trip_data['TripMainMode']
+
+            to_append = pd.Series([person_id, trip_main_mode], index=JourneyMainModes.columns)
             JourneyMainModes = JourneyMainModes.append(to_append, ignore_index=True)
-            to_append = pd.Series([person_id, max_DeclaredTripTime + 1], index=DeclaredJourneyTimes.columns)
+            to_append = pd.Series([person_id, DeclaredTripTime], index=DeclaredJourneyTimes.columns)
             DeclaredJourneyTimes = DeclaredJourneyTimes.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, home_town_code], index=PrimaryLocTownCodes.columns)
             PrimaryLocTownCodes = PrimaryLocTownCodes.append(to_append, ignore_index=True)
@@ -949,8 +952,6 @@ def execute(context):
             PrimaryLocStateNames = PrimaryLocStateNames.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, 0], index=PrimaryLocCrowFliesTripDists.columns)
             PrimaryLocCrowFliesTripDists = PrimaryLocCrowFliesTripDists.append(to_append, ignore_index=True)
-            to_append = pd.Series([person_id, False], index=IsPassengers.columns)
-            IsPassengers = IsPassengers.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, False], index=HasWorkTrips.columns)
             HasWorkTrips = HasWorkTrips.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, False], index=HasEducationTrips.columns)
@@ -963,7 +964,6 @@ def execute(context):
     df_CzechiaHTS_ph = pd.merge(PrimaryLocDistrictCodes, df_CzechiaHTS_ph, on='PersonID')
     df_CzechiaHTS_ph = pd.merge(PrimaryLocStateNames, df_CzechiaHTS_ph, on='PersonID')
     df_CzechiaHTS_ph = pd.merge(PrimaryLocCrowFliesTripDists, df_CzechiaHTS_ph, on='PersonID')
-    df_CzechiaHTS_ph = pd.merge(IsPassengers, df_CzechiaHTS_ph, on='PersonID')
     df_CzechiaHTS_ph = pd.merge(HasWorkTrips, df_CzechiaHTS_ph, on='PersonID')
     df_CzechiaHTS_ph = pd.merge(HasEducationTrips, df_CzechiaHTS_ph, on='PersonID')
 
@@ -981,7 +981,6 @@ def execute(context):
     # f) PrimaryLocStateName for each person (the trip to primary location)
     # g) JourneyMainMode for each person
     # h) TripMainMode for each trip of each person
-    # i) IsPassenger for each trip (the trip to primary location)
     PrimaryLocRelationHomes = pd.DataFrame(columns=['PersonID', 'PrimaryLocRelationHome'])
     JourneyMainModes = pd.DataFrame(columns=['PersonID', 'JourneyMainMode'])
     DeclaredJourneyTimes = pd.DataFrame(columns=['PersonID', 'DeclaredJourneyTime'])
@@ -991,11 +990,10 @@ def execute(context):
     PrimaryLocCrowFliesTripDists = pd.DataFrame(columns=['PersonID', 'PrimaryLocCrowFliesTripDist'])
     max_DeclaredTripTime = df_CityHTS_t['DeclaredTripTime'].max()
     TripMainModes = pd.DataFrame(columns=['TripID', 'TripMainMode'])
-    IsPassengers = pd.DataFrame(columns=['PersonID', 'IsPassenger'])
     HasWorkTrips = pd.DataFrame(columns=['PersonID', 'HasWorkTrip'])
     HasEducationTrips = pd.DataFrame(columns=['PersonID', 'HasEducationTrip'])
     df_group = df_CityHTS_t.groupby('PersonID')
-    for person_id, trips_data in tqdm(df_group, total=len(df_group),
+    for person_id, trips_data in tqdm(df_group, total=len(df_group), ascii=True,
                                       desc="Generating missing data (i.e. add columns) "
                                            "to match CityHTS with Census data"):
         person_row = df_CityHTS_ph.loc[df_CityHTS_ph['PersonID'] == person_id]
@@ -1071,7 +1069,6 @@ def execute(context):
             DeclaredTripTime = trip_data['DeclaredTripTime']
             CrowFliesTripDist = trip_data['CrowFliesTripDist']
             main_mode = pd.to_numeric(journeyTimes).idxmax()
-            passenger_bool = main_mode == 'TimePassengerCar'
             to_append = pd.Series([person_id, list(journeyTimes.keys()).index(main_mode) + 1],
                                   index=JourneyMainModes.columns)
             JourneyMainModes = JourneyMainModes.append(to_append, ignore_index=True)
@@ -1086,8 +1083,6 @@ def execute(context):
             PrimaryLocStateNames = PrimaryLocStateNames.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, CrowFliesTripDist], index=PrimaryLocCrowFliesTripDists.columns)
             PrimaryLocCrowFliesTripDists = PrimaryLocCrowFliesTripDists.append(to_append, ignore_index=True)
-            to_append = pd.Series([person_id, passenger_bool], index=IsPassengers.columns)
-            IsPassengers = IsPassengers.append(to_append, ignore_index=True)
 
             if has_work_trip:
                 to_append = pd.Series([person_id, True], index=HasWorkTrips.columns)
@@ -1105,9 +1100,18 @@ def execute(context):
             # Not economically active people
             to_append = pd.Series([person_id, '88'], index=PrimaryLocRelationHomes.columns)
             PrimaryLocRelationHomes = PrimaryLocRelationHomes.append(to_append, ignore_index=True)
-            to_append = pd.Series([person_id, '999'], index=JourneyMainModes.columns)
+
+            # Select as the main trip the longest one
+            trip_data = trips_data.loc[trips_data['DeclaredTripTime'] == max(trips_data['DeclaredTripTime'])]
+            trip_data = trip_data.iloc[0]  # take only the first trip of the main journey
+            DeclaredTripTime = trip_data['DeclaredTripTime']
+            journeyTimes = trip_data[['TimeFoot', 'TimeBike', 'TimeMHD', 'TimeRegionalBus',
+                                      'TimeRegionalTrain', 'TimeDriverCar', 'TimePassengerCar', 'TimeOther']]
+            main_mode = pd.to_numeric(journeyTimes).idxmax()
+            to_append = pd.Series([person_id, list(journeyTimes.keys()).index(main_mode) + 1],
+                                  index=JourneyMainModes.columns)
             JourneyMainModes = JourneyMainModes.append(to_append, ignore_index=True)
-            to_append = pd.Series([person_id, max_DeclaredTripTime + 1], index=DeclaredJourneyTimes.columns)
+            to_append = pd.Series([person_id, DeclaredTripTime], index=DeclaredJourneyTimes.columns)
             DeclaredJourneyTimes = DeclaredJourneyTimes.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, home_town_code], index=PrimaryLocTownCodes.columns)
             PrimaryLocTownCodes = PrimaryLocTownCodes.append(to_append, ignore_index=True)
@@ -1117,8 +1121,6 @@ def execute(context):
             PrimaryLocStateNames = PrimaryLocStateNames.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, 0], index=PrimaryLocCrowFliesTripDists.columns)
             PrimaryLocCrowFliesTripDists = PrimaryLocCrowFliesTripDists.append(to_append, ignore_index=True)
-            to_append = pd.Series([person_id, False], index=IsPassengers.columns)
-            IsPassengers = IsPassengers.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, False], index=HasWorkTrips.columns)
             HasWorkTrips = HasWorkTrips.append(to_append, ignore_index=True)
             to_append = pd.Series([person_id, False], index=HasEducationTrips.columns)
@@ -1132,7 +1134,6 @@ def execute(context):
     df_CityHTS_ph = pd.merge(PrimaryLocDistrictCodes, df_CityHTS_ph, on='PersonID')
     df_CityHTS_ph = pd.merge(PrimaryLocCrowFliesTripDists, df_CityHTS_ph, on='PersonID')
     df_CityHTS_t = pd.merge(TripMainModes, df_CityHTS_t, on='TripID')
-    df_CityHTS_ph = pd.merge(IsPassengers, df_CityHTS_ph, on='PersonID')
     df_CityHTS_ph = pd.merge(HasWorkTrips, df_CityHTS_ph, on='PersonID')
     df_CityHTS_ph = pd.merge(HasEducationTrips, df_CityHTS_ph, on='PersonID')
 
@@ -1156,7 +1157,7 @@ def execute(context):
         # 'FlexibleBegEndTime', # potential useful info
         'FlexibleHours',
         # 'AvailCarSharing', # potential useful info
-        "AvailCar", "AvailBike", "DrivingLicense", "PtSubscription", "IsPassenger",
+        "AvailCar", "AvailBike", "DrivingLicense", "PtSubscription",
     ]]
 
     df_CzechiaHTS_t = df_CzechiaHTS_t[['TripID', 'PersonID', 'TripOrderNum', 'OriginStart', 'DestEnd', 'TripMainMode',
@@ -1178,7 +1179,7 @@ def execute(context):
         'PrimaryLocTownCode', 'PrimaryLocDistrictCode', 'PrimaryLocStateName', 'PrimaryLocCrowFliesTripDist',
         "HasWorkTrip", "HasEducationTrip",
         'FlexibleHours',
-        "AvailCar", "AvailBike", "DrivingLicense", "PtSubscription", "IsPassenger",
+        "AvailCar", "AvailBike", "DrivingLicense", "PtSubscription",
     ]]
 
     df_CityHTS_t = df_CityHTS_t[['TripID', 'PersonID', 'TripOrderNum', 'OriginStart', 'DestEnd', 'TripMainMode',

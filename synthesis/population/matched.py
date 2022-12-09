@@ -1,8 +1,11 @@
+import sys
+
 import pandas as pd
 import numpy as np
 import synthesis.population.algo.hot_deck_matching
 
 MINIMUM_SOURCE_SAMPLES = 3
+UNMATCHABLE_MODE = "RANDOM" # options: RANDOM or DELETE
 
 def configure(context):
 
@@ -76,54 +79,107 @@ def execute(context):
         minimum_source_samples = MINIMUM_SOURCE_SAMPLES
     )
 
-    # Remove and track unmatchable persons
+    # Fix inconsistencies and remove and track unmatchable persons
     all_df_matching = []
-    all_removed_person_ids = []
-    dfs = {"census": df_census, "target": [df_target_municipalities, df_target_city]}
+    all_not_matched_person_ids = []
+    all_deleted_person_ids = []
+    dfs = {"census": df_census, "target": [df_target_municipalities, df_target_city],
+           "source": [df_source_CzechiaHTS, df_source_CityHTS]}
     num_dfs = len(dfs["census"])
     assert num_dfs == len(dfs["target"])
     for df_ind in range(0, num_dfs):
         df_census = dfs["census"][df_ind]
         df_target = dfs["target"][df_ind]
+        df_source = dfs["source"][df_ind]
 
+        # As HTS Czechia have AgeGroup = 2 including 18 years old, fix inconsistency that could assign HTS samples with
+        # driving license to people younger than 18
+        young_driving_person_selector = (df_target["hdm_source_id"] != -1) & (df_target["Age"].astype(int) < 18)
+        num = 0
+        for selector_ind, selector in enumerate(young_driving_person_selector):
+            if selector:
+                selector_bool = df_source.loc[df_source["PersonID"]
+                                              == df_target["hdm_source_id"].iloc[selector_ind]]["DrivingLicense"] == '1'
+                if selector_bool.values:
+                    df_target["hdm_source_id"].iloc[selector_ind] = -1
+                    num += 1
+        print("Number of inconsistencies for df_ind", str(df_ind) + ":", str(num))
+
+        # Define the unmatchable persons
         unmatchable_person_selector = df_target["hdm_source_id"] == -1
         umatchable_person_ids = set(df_target.loc[unmatchable_person_selector, "PersonID"].values)
         unmatchable_member_selector = df_census["PersonID"].isin(umatchable_person_ids)
-
-        removed_person_ids = set(df_census.loc[unmatchable_member_selector, "PersonID"].values)
-        all_removed_person_ids.append(removed_person_ids)
+        not_matched_person_ids = set(df_census.loc[unmatchable_member_selector, "PersonID"].values)
+        all_not_matched_person_ids.append(not_matched_person_ids)
 
         # Decide what to do with unmatchable persons, either:
-        # a) Assign randomly to each unmatchable person
-        if df_ind == 0:
-            df_target.loc[unmatchable_person_selector, "hdm_source_id"] = \
-                df_target.loc[unmatchable_person_selector, "hdm_source_id"].map(
-                    lambda x: random.choice(df_source_CzechiaHTS["PersonID"],
-                                               p=df_source_CzechiaHTS["Weight"] / sum(df_source_CzechiaHTS["Weight"]))).copy()
-        else:
-            df_target.loc[unmatchable_person_selector, "hdm_source_id"] = \
-                df_target.loc[unmatchable_person_selector, "hdm_source_id"].map(
-                    lambda x: random.choice(df_source_CityHTS["PersonID"],
-                                               p=df_source_CityHTS["Weight"] / sum(df_source_CityHTS["Weight"]))).copy()
+        if UNMATCHABLE_MODE == "RANDOM":
+            # a) Assign randomly to each unmatchable person
+            # Assign for people up to 17 years old HTS samples of people up to 18 years old without driving license
+            unmatchable_person_selector_younger = (df_target["hdm_source_id"] == -1) & (df_target["Age"].astype(int) < 18)
 
-        # b) Delete unmatchable people
-        # initial_census_length = len(df_census)
-        # initial_target_length = len(df_target)
-        #
-        # df_target = df_target.loc[~unmatchable_person_selector, :]
-        # df_census = df_census.loc[~unmatchable_member_selector, :]
-        #
-        # removed_persons_count = sum(unmatchable_person_selector)
-        # removed_members_count = sum(unmatchable_member_selector)
-        #
-        # assert(len(df_target) == initial_target_length - removed_persons_count)
-        # assert(len(df_census) == initial_census_length - removed_members_count)
+            # Assign for people at age 18 years old or older HTS samples of people 19 years old or more
+            unmatchable_person_selector_older = (df_target["hdm_source_id"] == -1) & (
+                        df_target["Age"].astype(int) >= 18)
+
+            if df_ind == 0:
+                df_source_CzechiaHTS_younger = df_source_CzechiaHTS.loc[(df_source_CzechiaHTS["AgeGroup"].isin(('1', '2')))
+                                                                        & (df_source_CzechiaHTS["DrivingLicense"] == '0')]
+                df_target.loc[unmatchable_person_selector_younger, "hdm_source_id"] = \
+                    df_target.loc[unmatchable_person_selector_younger, "hdm_source_id"].map(
+                        lambda x: random.choice(df_source_CzechiaHTS_younger["PersonID"],
+                                                p=df_source_CzechiaHTS_younger["Weight"] / sum(
+                                                    df_source_CzechiaHTS_younger["Weight"]))).copy()
+
+                df_source_CzechiaHTS_older = df_source_CzechiaHTS.loc[~df_source_CzechiaHTS["AgeGroup"].isin(('1', '2'))]
+                df_target.loc[unmatchable_person_selector_older, "hdm_source_id"] = \
+                    df_target.loc[unmatchable_person_selector_older, "hdm_source_id"].map(
+                        lambda x: random.choice(df_source_CzechiaHTS_older["PersonID"],
+                                                p=df_source_CzechiaHTS_older["Weight"] / sum(
+                                                    df_source_CzechiaHTS_older["Weight"]))).copy()
+            else:
+                df_source_CityHTS_younger = df_source_CityHTS.loc[(df_source_CityHTS["AgeGroup"].isin(('1', '2')))
+                                                                  & (df_source_CityHTS["DrivingLicense"] == '0')]
+                df_target.loc[unmatchable_person_selector_younger, "hdm_source_id"] = \
+                    df_target.loc[unmatchable_person_selector_younger, "hdm_source_id"].map(
+                        lambda x: random.choice(df_source_CityHTS_younger["PersonID"],
+                                                p=df_source_CityHTS_younger["Weight"] / sum(
+                                                    df_source_CityHTS_younger["Weight"]))).copy()
+                df_source_CityHTS_older = df_source_CityHTS.loc[~df_source_CityHTS["AgeGroup"].isin(('1', '2'))]
+                df_target.loc[unmatchable_person_selector_older, "hdm_source_id"] = \
+                    df_target.loc[unmatchable_person_selector_older, "hdm_source_id"].map(
+                        lambda x: random.choice(df_source_CityHTS_older["PersonID"],
+                                                p=df_source_CityHTS_older["Weight"] / sum(
+                                                    df_source_CityHTS_older["Weight"]))).copy()
+
+            deletable_person_selector = df_target["hdm_source_id"] == -1
+            deletable_person_ids = set(df_target.loc[deletable_person_selector, "PersonID"].values)
+            deletable_member_selector = df_census["PersonID"].isin(deletable_person_ids)
+
+            deleted_person_ids = set(df_census.loc[deletable_member_selector, "PersonID"].values)
+            all_deleted_person_ids.append(deleted_person_ids)
+        else:
+            deleted_person_ids = set()
+
+        if UNMATCHABLE_MODE == "DELETE" or len(deleted_person_ids) > 0:
+            # b) Delete unmatchable people
+            initial_census_length = len(df_census)
+            initial_target_length = len(df_target)
+
+            df_target = df_target.loc[~unmatchable_person_selector, :]
+            df_census = df_census.loc[~unmatchable_member_selector, :]
+
+            not_matched_persons_count = sum(unmatchable_person_selector)
+            not_matched_members_count = sum(unmatchable_member_selector)
+
+            assert(len(df_target) == initial_target_length - not_matched_persons_count)
+            assert(len(df_census) == initial_census_length - not_matched_members_count)
 
         # Get only the matching information
         df_matching = pd.merge(
-            df_census[[ "PersonID" ]],
-            df_target[[ "PersonID", "hdm_source_id" ]],
-            on = "PersonID", how = "left")
+            df_census[["PersonID"]],
+            df_target[["PersonID", "hdm_source_id"]],
+            on="PersonID", how="left")
 
         df_matching["hts_PersonID"] = df_matching["hdm_source_id"]
         del df_matching["hdm_source_id"]
@@ -131,12 +187,28 @@ def execute(context):
 
         assert(len(df_matching) == len(df_census))
 
-    print("Matching is done. In total, the following observations could not be matched "
-          "(optionally you can remove them, "
-          "but at the moment they were assigned a random set of attributes from both HTS): ")
-    sum_removed = sum([len(pids) for pids in all_removed_person_ids])
-    print("  Persons: %d (%.2f%%)" % ( sum_removed,
-                                       100.0 * sum_removed
-                                       / sum(number_of_census_persons) ))
+    if UNMATCHABLE_MODE == "RANDOM":
+        print("Matching is done. In total, the following observations could not be matched "
+                  "(they were assigned a random set of attributes from HTS, but only "
+              "if samples are both younger or older than 18 years old: ")
+        sum_not_matched = sum([len(pids) for pids in all_not_matched_person_ids])
+        print("  Persons: %d (%.2f%%)" % (sum_not_matched,
+                                          100.0 * sum_not_matched
+                                          / sum(number_of_census_persons)))
+        print("Regarding those not matching even if younger or older, the following observations could not be matched "
+              "(they were removed from the results): ")
+        sum_deleted = sum([len(pids) for pids in all_deleted_person_ids])
+        print("  Persons: %d (%.2f%%)" % (sum_deleted,
+                                          100.0 * sum_deleted
+                                          / sum(number_of_census_persons)))
+    elif UNMATCHABLE_MODE == "DELETE":
+        print("Matching is done. In total, the following observations could not be matched "
+              "(they were removed from the results): ")
+        sum_not_matched = sum([len(pids) for pids in all_not_matched_person_ids])
+        print("  Persons: %d (%.2f%%)" % (sum_not_matched,
+                                          100.0 * sum_not_matched
+                                          / sum(number_of_census_persons)))
+    else:
+        pass
 
-    return all_df_matching, all_removed_person_ids
+    return all_df_matching
